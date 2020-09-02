@@ -32,7 +32,7 @@ N <- 25
 # Stopping rule: if dose 1 is the only safe dose, allocate up to 9 pts before ending the trial to collect more information
 stop.rule <- 9   
 
-## ---- echo=F, fig.width=6, fig.height=3----------------------------------
+## ---- echo=FALSE, fig.width=6, fig.height=3------------------------------
 par(mfrow = c(1,2))
 plot(x = 1:5, y = dose.tox, ylim = c(0, p_no + 0.1),
      type = 'b',
@@ -66,10 +66,10 @@ set.seed(3)
 rand.stg2(dose, dose.tox, p_no, p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100) 
 
 ## ---- results='hide'-----------------------------------------------------
-numsims = 100
+sims = 1e2
 
 set.seed(3)
-simulations = sim.trials(numsims = numsims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
+simulations = sim.trials(numsims = sims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
 
 ## ------------------------------------------------------------------------
 head(simulations$safe.d)
@@ -77,15 +77,14 @@ head(simulations$sim.Y)
 head(simulations$sim.d)
 
 ## ------------------------------------------------------------------------
-colSums(simulations$safe.d) / numsims
+colSums(simulations$safe.d) / sims
 
 ## ------------------------------------------------------------------------
 sim.tables = sim.summary(simulations)
 
 ## ------------------------------------------------------------------------
 # Vector of true mean efficacies per dose (here mean percent persistence per dose)
-m <- c(15, 35, 80, 60, 40)   # MUST BE THE SAME LENGTH AS dose.tox                  
-
+m <- c(15, 35, 80, 60, 40)   # MUST BE THE SAME LENGTH AS dose.tox            
 
 ## ---- echo=F, fig.width=6, fig.height=3----------------------------------
 par(mfrow = c(1,2))
@@ -123,10 +122,10 @@ set.seed(1)
 rand.stg2(dose, dose.tox, p_no, p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100) 
 
 ## ---- results='hide'-----------------------------------------------------
-numsims = 100
+sims = 1e2
 
 set.seed(1)
-simulations = sim.trials(numsims = numsims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
+simulations = sim.trials(numsims = sims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
 
 ## ------------------------------------------------------------------------
 head(simulations$safe.d)
@@ -134,7 +133,7 @@ head(simulations$sim.Y)
 head(simulations$sim.d)
 
 ## ------------------------------------------------------------------------
-colSums(simulations$safe.d) / numsims
+colSums(simulations$safe.d) / sims
 
 ## ------------------------------------------------------------------------
 sim.tables = sim.summary(simulations)

@@ -22,17 +22,20 @@ sim.trials(numsims, dose, dose.tox, p1, p2, K, coh.size, m, v, N,
 
 \item{coh.size}{cohort size (number of patients) per dose (Stage 1)}
 
-\item{m}{vector of mean efficacies per dose. Values range from 0 - 100. (e.g, T cell persistence - values b/w 5 and 80 per cent)}
+\item{m}{vector of mean efficacies per dose. Values range from 0 - 100. 
+(e.g, T cell persistence - values b/w 5 and 80 per cent)}
 
 \item{v}{vector of efficacy variances per dose. Values range from 0 - 1. (e.g., 0.01)}
 
 \item{N}{total sample size for stages 1&2}
 
-\item{stop.rule}{if only dose 1 safe, allocate up to 9 (default) patients at dose 1 to collect more info}
+\item{stop.rule}{if only dose 1 safe, allocate up to 9 (default) patients at dose 1 
+to collect more info.}
 
 \item{cohort}{cohort size (number of patients) per dose (Stage 2). Default is 1.}
 
-\item{samedose}{designates whether the next patient is allocated to the same dose as the previous patient. Default is TRUE. Function adjusts accordingly.}
+\item{samedose}{designates whether the next patient is allocated to the same dose 
+as the previous patient. Default is TRUE. Function adjusts accordingly.}
 
 \item{nbb}{binomial parameter (default = 100 cells per patient)}
 }
@@ -41,16 +44,20 @@ List of the following objects:
 \itemize{
 \item sim.Y - estimated efficacy per each dose assignment 
 \item sim.d - dose assignment for each patient in the trial 
+\item safe.d - indicator of whether dose was declared safe
 }
 }
 \description{
-Results are displayed in a matrix format, where each row represents one trial simulation
+Results are displayed in a matrix format, where each row 
+represents one trial simulation.
 }
 \examples{
 # Number of pre-specified dose levels
 dose <- 5
+
 # Vector of true toxicities associated with each dose
 dose.tox <- c(0.05, 0.10, 0.20, 0.35, 0.45)       
+
 # Acceptable (p_yes) and unacceptable (p_no) DLT rates used for establishing safety
 p_no <- 0.40                                     
 p_yes <- 0.15    

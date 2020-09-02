@@ -2,7 +2,7 @@
 % Please edit documentation in R/safe.dose.R
 \name{safe.dose}
 \alias{safe.dose}
-\title{Identify safe/acceptable doses}
+\title{Identify safe/acceptable doses from stage 1 based on observed binary toxicity}
 \usage{
 safe.dose(dose, dose.tox, p1, p2, K, coh.size)
 }
@@ -22,7 +22,8 @@ safe.dose(dose, dose.tox, p1, p2, K, coh.size)
 \value{
 List of the following objects:
 \itemize{
-\item alloc.safe - matrix of assignments only for acceptable doses (to be used in stage 2) and their corresponding toxicities
+\item alloc.safe - matrix of assignments only for acceptable doses 
+(to be used in stage 2) and their corresponding toxicities
 \item alloc.total - vector of all dose assignments from stage 1 
 \item n1 - total number of subjects allocated in stage 1
 }

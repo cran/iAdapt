@@ -20,33 +20,40 @@ rand.stg2(dose, dose.tox, p1, p2, K, coh.size, m, v, N, stop.rule = 9,
 
 \item{coh.size}{cohort size (number of patients) per dose (Stage 1)}
 
-\item{m}{vector of mean efficacies per dose. Values range from 0 - 100. (e.g, T cell persistence - values b/w 5 and 80 per cent)}
+\item{m}{vector of mean efficacies per dose. Values range from 0 - 100. 
+(e.g, T cell persistence - values b/w 5 and 80 per cent)}
 
 \item{v}{vector of efficacy variances per dose. Values range from 0 - 1. (e.g., 0.01)}
 
 \item{N}{total sample size for stages 1&2}
 
-\item{stop.rule}{if only dose 1 safe, allocate up to 9 (default) patients at dose 1 to collect more info}
+\item{stop.rule}{if only dose 1 safe, allocate up to 9 (default) patients at dose 1 
+to collect more info}
 
 \item{cohort}{cohort size (number of patients) per dose (Stage 2). Default is 1.}
 
-\item{samedose}{designates whether the next patient is allocated to the same dose as the previous patient. Default is TRUE. Function adjusts accordingly.}
+\item{samedose}{designates whether the next patient is allocated to the same dose 
+as the previous patient. Default is TRUE. Function adjusts accordingly.}
 
 \item{nbb}{binomial parameter (default = 100 cells per patient)}
 }
 \value{
 List of the following objects:
 \itemize{
-\item Y.final - vector of all efficacy outcomes (Ys) corresponding to dose assignments (Stages 1&2)
-\item d.final - vector of all dose assignments(Stage 1&2)
+\item Y.final - vector of all efficacy outcomes (Ys) corresponding to dose assignments 
+(Stages 1&2)
+\item d.final - vector of all dose assignments(Stages 1&2)
 }
-If no dose allocation, put NAs in d.final and y.final.
+If dose allocation stops early, put NAs in d.final and y.final 
+until it reaches the total sample size.
 }
 \description{
-Function \code{rand.stg2()} fits a linear regression for the continuous efficacy outcomes,
+Function \code{rand.stg2()} fits a linear regression for the continuous 
+efficacy outcomes,
 computes the randomization probabilities/dose and allocates the next patient to a dose that
-is considered acceptably safe and has the highest efficacy. Dose safety is still monitored using LR and doses
-that become unacceptable are discarded.
+is considered acceptably safe and has the most promising efficacy. Dose safety is still 
+monitored using LR and doses
+that become unacceptable are discarded (never re-visited).
 }
 \examples{
 # Number of pre-specified dose levels

@@ -1,8 +1,8 @@
 ---
-title: "Trial simulation"
+title: "Trial simulation with binary toxicity measure"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Trial simulation}
+  %\VignetteIndexEntry{Trial simulation with binary toxicity measure}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -59,7 +59,7 @@ stop.rule <- 9
 Note that, as we've specified them, we have monotone increasing dose-toxicity and dose-efficacy curves, as shown below. If the unacceptable dose-limiting toxicity (DLT) rate is 0.40, (horizontal dotted line, figure a), then our target/optimal dose is dose 4 (green point) - the safe dose with the highest efficacy. 
 
 
-```{r, echo=F, fig.width=6, fig.height=3}
+```{r, echo=FALSE, fig.width=6, fig.height=3}
 par(mfrow = c(1,2))
 plot(x = 1:5, y = dose.tox, ylim = c(0, p_no + 0.1),
      type = 'b',
@@ -128,10 +128,10 @@ The complete vectors of dose allocations and efficacy outcomes for the entire tr
 
 To simulate this trial 100 times, we can run the following:
 ```{r, results='hide'}
-numsims = 100
+sims = 1e2
 
 set.seed(3)
-simulations = sim.trials(numsims = numsims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
+simulations = sim.trials(numsims = sims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
 ```
 
 \$safe.d indicates whether each dose (column) was declared safe in stage 1 (1 = yes, 0 = no) for each trial (row).  
@@ -144,9 +144,9 @@ head(simulations$sim.d)
 
 \$sim.Y gives the observed outcomes, where each column corresponds to 1 patient (maximum of N columns), and each row is a simulated trial. Correspondingly, \$sim.d gives the dose allocation for each patient (column) in each trial (row). 
 
-To see the rate at which we've designated each dose as safe in stage 1, we can simply take the column totals of the \$safe.d matrix:
+To see the proportion of times we've designated each dose as safe in stage 1, we can simply take the column totals of the \$safe.d matrix:
 ```{r}
-colSums(simulations$safe.d) / numsims
+colSums(simulations$safe.d) / sims
 ```
 
 Simulation results can be summarized. For each dose level, the inter-quartile range (25th percentile, median, 75th percentile) for the percent of subjects treated and observed efficacy are given in tables.
@@ -162,8 +162,7 @@ Here, all parameters are the same as in scenario 1, except for the true mean eff
 
 ```{r}
 # Vector of true mean efficacies per dose (here mean percent persistence per dose)
-m <- c(15, 35, 80, 60, 40)   # MUST BE THE SAME LENGTH AS dose.tox                  
-
+m <- c(15, 35, 80, 60, 40)   # MUST BE THE SAME LENGTH AS dose.tox            
 ```
 
 Now we have a non-monotone dose-efficacy curves, as shown below. If we have an acceptable dose-limiting toxicity (DLT) rate of 0.40, (horizontal dotted line, figure a), then our target/optimal dose would be dose 4 as we did in the previous scenario (red point). However, note that according to the true efficacies of each dose, the lesser dose number 3 is actually best (green point). Assuming a monotone relationship, we would be incorrectly pushing forward a more toxic and less effective dose level. 
@@ -233,10 +232,10 @@ The complete vectors of dose allocations and efficacy outcomes can be used to co
  
  To simulate this trial 100 times, we can run the following:
 ```{r, results='hide'}
-numsims = 100
+sims = 1e2
 
 set.seed(1)
-simulations = sim.trials(numsims = numsims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
+simulations = sim.trials(numsims = sims, dose, dose.tox, p1 = p_no, p2 = p_yes, K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100)
 ```
 
 \$safe.d indicates whether each dose (column) was declared safe in stage 1 (1 = yes, 0 = no) for each trial (row).  
@@ -251,7 +250,7 @@ head(simulations$sim.d)
 
 To see the rate at which we've designated each dose as safe in stage 1, we can simply take the column totals of the \$safe.d matrix:
 ```{r}
-colSums(simulations$safe.d) / numsims
+colSums(simulations$safe.d) / sims
 ```
 
 Simulation results are also summarized below.

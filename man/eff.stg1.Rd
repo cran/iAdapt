@@ -2,7 +2,7 @@
 % Please edit documentation in R/eff.stg1.R
 \name{eff.stg1}
 \alias{eff.stg1}
-\title{Generates efficacy outcomes for stage 1}
+\title{Generates efficacy outcomes for stage 1 when using binary toxicity}
 \usage{
 eff.stg1(dose, dose.tox, p1, p2, K, coh.size, m, v, nbb = 100)
 }
@@ -27,13 +27,13 @@ eff.stg1(dose, dose.tox, p1, p2, K, coh.size, m, v, nbb = 100)
 \item{nbb}{binomial parameter (default = 100 cells per patient)}
 }
 \value{
-List of efficacy outcomes for subject enrolled during stage 1 (dose-escalation)
+List of efficacy outcomes for subjects enrolled during stage 1 (dose-escalation)
 \itemize{
-\item Y.safe - vector of efficacy outcomes for each subject enrolled on an acceptably toxic dose
-\item d.safe - vector of dose allocation for each subject enrolled on an acceptably toxic dose
+\item Y.safe - vector of efficacy outcomes for each subject assigned to an acceptable safe dose
+\item d.safe - vector of dose allocation for each subject assigned to an acceptable safe dose
 \item tox.safe - number of dose-limiting toxicities for each safe dose level
-\item Y.alloc - vector of efficacy outcomes for all subjects enrolled on all doses (safe and unsafe)
-\item d.alloc - vector of dose allocation for all subjects enrolled on all doses (safe and unsafe)
+\item Y.alloc - vector of efficacy outcomes for all subjects from stage 1 (acceptable and unsafe doses)
+\item d.alloc - vector of dose allocation for all subjects from stage 1 (acceptable and unsafe doses)
 }
 }
 \description{
@@ -45,9 +45,9 @@ outcomes (Ys) corresponding to acceptable dose assignments from stage 1.
 dose <- 5
 # Vector of true toxicities associated with each dose
 dose.tox <- c(0.05, 0.10, 0.20, 0.35, 0.45)       
-# Acceptable (p_yes) and unacceptable (p_no) DLT rates used for establishing safety
-p_no <- 0.40                                     
-p_yes <- 0.15    
+# Acceptable (p2) and unacceptable (p1) DLT rates used for establishing safety
+p1 <- 0.40                                     
+p2 <- 0.15   
 
 # Likelihood-ratio (LR) threshold
 K <- 2                                          
@@ -58,7 +58,7 @@ coh.size <- 3
 # Vector of true mean efficacies per dose (here mean percent persistence per dose)
 m <- c(5, 15, 40, 65, 80)   # MUST BE THE SAME LENGTH AS dose.tox                  
 
-# Efficacy(equal) variance per dose
+# Efficacy (equal) variance per dose
 v <- rep(0.01, 5) 
 
 # Total sample size (stages 1&2)                            
@@ -67,7 +67,7 @@ N <- 25
 # Stopping rule: if dose 1 is the only safe dose, allocate up to 9 pts.
 stop.rule <- 9 
 
-eff.stg1(dose = dose, dose.tox = dose.tox, p1 = p_no, p2 = p_yes, K = K, 
+eff.stg1(dose = dose, dose.tox = dose.tox, p1 = p1, p2 = p2, K = K, 
 coh.size = coh.size, m, v, nbb = 100)
 
 }

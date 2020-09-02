@@ -1,0 +1,257 @@
+---
+title: "Trial simulation with quasi-continuous toxicity measure"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Trial simulation with quasi-continuous toxicity measure}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      eval = TRUE)
+```
+
+## Overview 
+
+Dose-finding designs traditionally use the dose-limiting toxicity (DLT), a binary endpoint (yes/no DLT) to identify the maximum tolerated dose (MTD) or the recommended phase 2 dose (RP2D). A DLT is defined based on the severity of an adverse event (AE) and measured ordinally from 0 (no AE), to 4 (severe AE). The standard measure of toxicity dichotomizes this scale and generally defines a dose-limiting toxicity (DLT) as an AE of grade 3 or higher.
+
+The normalized Total Toxicity Profile (nTTP), developed by [Ezzalfani et al. (2013)](https://onlinelibrary.wiley.com/doi/full/10.1002/sim.5737), is a quasi-continuous measure that accounts for different kinds of toxicity and adverse event grade by weighting them based on patient burden. For example, a grade 2 neurological AE may be less burdensome than a grade 2 gastrointestinal AE. The weight matrix $W$ is comprised of weights $w_{l,j}$, and defined as 
+
+$$
+W=
+\begin{bmatrix}
+w_{1,0} & \cdots & w_{1,4} \\
+\vdots & \ddots & \vdots \\
+w_{L,0} & \cdots & w_{L,4}
+\end{bmatrix}
+$$
+
+for grades $j=0,…,4$ and toxicity types $l=1,…,L$. The non-normalized TTP for individual i on dose d is calculated directly from this matrix as the Euclidean norm, defined as 
+
+$$
+TTP_{i,d} = \sqrt{ \sum_{l=1}^L \sum_{j=0}^{4} w_{l,j}^2 \textbf{I} (G_{i,d,l}=j)}
+$$
+
+where $\textbf{I} (G_{i,d,l}=j)$ is 1 when the maximum grade for toxicity type $l$ is equal to $j$, and 0 otherwise. By construction, the TTP can be considered to be a quasi-continuous variable with limited range of variation. The nTTP is formed by diving the TTP by normalization constant v, which is the TTP when all toxicity types are observed at grade 4. In this way, the nTTP range is constrained between 0 and 1. 
+See the original publication for further details.
+
+## Statistical model for nTTP within the iAdapt framework
+
+See the README and [Chiuzan et al. (2018)](https://www.tandfonline.com/doi/abs/10.1080/19466315.2018.1462727) for details on the iAdapt design framework.
+
+For any dose $d \in \{1,...,D \}$
+, let $X_{1,d},...,X_{n,d} \overset{\text{iid}}{\sim}  N(\mu_d, \sigma^2)$ truncated to $[0,1]$ be the observed nTTP scores for n patients with the following density function:
+
+$$
+f_d (x_i; \mu_d, \sigma^2) = \frac{\phi(\frac{x_i - \mu_d}{\sigma})}{\sigma[\Phi(\frac{1-\mu_d}{\sigma}) - \Phi(\frac{0-\mu_d}{\sigma})]} \text{ for } i=1,2,...,n
+$$
+
+where $\mu_d$ is the unknown mean nTTP for dose $d$, and $\sigma^2$ is the constant variance across doses. 
+
+## Simulation example
+
+Suppose we have $D=6$ doses to test, and are concerned with $L=3$ toxicity types (e.g. renal, neurological, and hematological). A DLT is defined as an AE of grade 3, 3, and 4 (or higher, excluding grade 5) associated with each toxicity type, respectively.
+
+Let $H_1: \mu=0.35 \text{ vs. } H_2: \mu=0.1$. Variance of observed nTTP is $\sigma^2 = 0.15$. Weight matrix W, adapted from [Du et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/30403559/), is 
+
+$$
+W=
+\begin{bmatrix}
+0 & 0.5 & 0.75 & 1 & 1.5 \\
+0 & 0.5 & 0.75 & 1 & 1.5 \\
+0 & 0 & 0 & 0.5 & 1
+\end{bmatrix}
+$$
+
+Note that the first column contains zero values assuming a weight of 0 for a grade 0 event. We also specify the probability of observing an AE of each grade for a given toxicity type and dose level, taken from Du et al.(2019).
+
+### Specify design parameters
+
+```{r}
+library(iAdapt)
+std.nTTP = 0.15 # standard deviation of nTTP value
+
+coh.size = 3 # number pts per dose
+ntox <- 3 # Number of unique toxicities
+d <- 6 # Number of dose levels
+N <- 25 # maximum number of patients
+
+# Variance of the efficacy endpoints used for stage 2 randomization, assumed known and constant across doses.
+v <- rep(0.01, 6) 
+
+K = 2 # for LRT
+
+# Stopping rule: if dose 1 is the only safe dose, allocate up to 9 pts before ending the trial to collect more information
+stop.rule <- 9 
+
+# Dose-efficacy curve
+m = c(10, 20, 30, 40, 70, 90)
+
+#### Define the weight matrix, from Du et al.(2019)
+W <- matrix(c(0, 0.5, 0.75, 1.0, 1.5, # Burden weight for grades 1-4 for toxicity 1
+              0, 0.5, 0.75, 1.0, 1.5, # Burden weight for grades 1-4 for toxicity 2
+              0, 0.0, 0.00, 0.5, 1), ## Burden weight for grades 1-4 for toxicity 3
+            nrow = ntox, byrow = T)
+
+#### Define an array to hold toxicitiy probabilities 
+data("TOX"); TOX # laod sample TOX array
+
+## Grade at which an AE is defined as DLT for each toxicity type
+grade.thresh = c(3, 3, 4)
+```
+
+
+### Calculate mean nTTP (mnTTP) and corresponding DLT rate per dose, and specify hypotheses
+
+```{r}
+# Obtain the expected mean toxicity score at each dose level
+tru_mnTTP = get.thresh(dose = d, ntox = ntox, W = W, TOX = TOX)
+
+# Get the expected probability of a DLT at each dose level
+pDLT = dlt.prob(dose = d, TOX = TOX, ntox = ntox, grade.thresh = grade.thresh) 
+
+# Specify hypotheses
+h1 = 0.35
+h2 = 0.10
+```
+
+
+To choose hypotheses, we used the following method:
+
+* Calculate both the mnTTP and DLT rate per dose, based on the nTTP inputs (ntox, W, TOX)
+
+* Plot both dose-toxicity curves 
+
+```{r, echo=FALSE, fig.width=6, fig.height=5}
+# plot mnTTP
+plot(x = 1:d,
+     y = tru_mnTTP,
+     ylim = c(0, 0.5),
+     type = 'b',
+     ylab = NA, 
+     xlab = NA)
+# plot corresponsing DLT rate
+lines(x = 1:d,
+      y = pDLT,
+      col = "red",
+      type = 'b')
+# plot benchmark value of 0.4 from Chiuzan
+abline(h = 0.4,
+       lty = 2)
+# plot vertical line at intersection of benchmark with dose-DLT
+abline(v = 5.6,
+       lty = 4)
+# plot vertical line at intersection of vertical line and dose-nTTP
+abline(h = 0.35,
+       lty = 3)
+# labels
+title(main = "Dose-level toxicity",
+       ylab = "Toxicity",
+       xlab = "Dose")
+# curve labels
+text(x = 1.8,
+     y = 0.1,
+     labels = "mean nTTP",
+     cex = 0.7)
+text(x = 4,
+     y = 0.1,
+     labels = "DLT probability",
+     cex = 0.7,
+     col = "red")
+```
+
+* Choose an unacceptably toxic benchmark for DLT rate (based on previous studies and/or other practical considerations) since this is interpretable and plot a horizontal line. Here, we use h1 = 0.4 as a benchmark (as used in Chiuzan et al.). Note where the dose-DLT curve intersects this horizontal line. From that point, draw a perpendicular line to the dose-nTTP curve and indentify the corresponding mnTTP. In this example, the corresponsing mean nTTP is approximately 0.35 (to be used as h1 for nTTP hypotheses).
+
+* Once h1 is chosen, h2 (acceptably safe) can be specified. Note that in the case of small cohort sizes, there needs to be adequate distance between hypotheses. We specify h1=0.35 and we use a difference of 0.25 (as used in Chiuzan et al.), and choose h2 = 0.10.
+
+Ultimately, selection of hypotheses is left to the discretion of the investigator/statistician. We recommend simulating under different hypotheses. Remember that the nTTP value is uninterpretable, which is why corresponding DLT rate is used to help select appropriate hypothesis values.
+
+### Simulate a single trial
+#### Stage 1: Establish the safety profile for all initial doses.
+
+Stage 1 establishes the safety profiles of the predefined doses. 
+
+Function to generate and tabulate toxicities per dose level:
+
+```{r}
+set.seed(3)
+tox.profile.nTTP(dose = d, p1 = h1, p2 = h2, K = K, coh.size = coh.size, ntox = ntox, W = W, TOX = TOX, std.nTTP = std.nTTP)
+```
+
+The first column indicates the cohort number and third columns gives the dose assignment for all specified doses (in this case, 5). The second column gives the number of DLTs observed at that dose. The fourth column gives the likelihood ratio calculated from the observed patient-level nTTP. 
+A dose is considered acceptably safe if the LR > 1/K and unacceptably safe if LR <= 1/K.
+
+Now let's see which doses the design selects as being acceptably safe using K=2. 
+
+Function to select only the acceptable toxic doses:
+```{r}
+set.seed(3)
+safe.dose.nTTP(dose = d, p1 = h1, p2 = h2, K = K, coh.size = coh.size, W = W, TOX = TOX, ntox = ntox, std.nTTP = std.nTTP) 
+```
+
+We can see that the design selects only doses 1 through 4; \$alloc.safe gives the dose assignment (first column) and mean nTTP for that dose (second column). \$alloc.total gives the dose assignment for all enrolled patients (\$n1 gives the total sample size used in stage 1, in this case 15 subjects), where we see that 3 patients were assigned to each dose as specified by `coh.size`.
+
+Stage 1 is mainly used to establish safety, but efficacy outcomes are also collected for each dose.
+ 
+Function to generate efficacy outcomes (here T-cell percent persistence) for each dose:
+```{r}
+set.seed(3)
+eff.stg1.nTTP(dose = d, p1 = h1, p2 = h2, K = K, m = m, v = v, coh.size = coh.size, nbb = 100, W = W, TOX = TOX, ntox = ntox, std.nTTP = std.nTTP) 
+```
+
+\$Y.safe and \$d.safe give the efficacy values and dose allocations for all subjects enrolled at acceptably safe doses; \$tox.safe gives the mean nTTP for each dose level; \$Y.alloc and \$d.alloc gives the efficacy values and dose allocations for all subjects enrolled in stage 1 (safe and unsafe doses). Notice that the \$Y.safe and \$d.safe are subsets of \$Y.alloc and \$d.alloc.
+
+
+### Stage 2: Adaptive randomization based on efficacy outcomes.
+
+If 2 or more doses are considered acceptable after stage 1, the remaining patients are randomized to these open doses until the total sample size N is reached. If only dose 1 is acceptable after stage 1, allocate up to 9 patients (`stop.rule = 9`). Toxicity is still being monitored (in the 'background') throughout stage 2, so acceptable doses (declared in stage 1) can still be discarded based on observed DLTs. The discarded dose and all levels above it cannot be revisited.
+
+Function to fit a linear regression for the continuous efficacy outcomes, compute the randomization probabilities per dose and allocate the next subject to an acceptable safe dose that has the highest randomization probability:
+```{r}
+set.seed(3)
+rand.stg2.nTTP(dose = d, p1 = h1, p2 = h2, K = K, coh.size = coh.size, m = m, v = v, N = N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100, W = W, TOX = TOX, ntox = ntox, std.nTTP = std.nTTP) 
+```
+
+
+### Simulate 100 trials
+
+To simulate this trial 100 times, we can run the following:
+```{r, results='hide'}
+set.seed(3)
+sims = 1e2 # number of trials to simulate
+
+simulations = sim.trials.nTTP(numsims = sims,
+                              dose = d,
+                              p1 = h1,
+                              p2 = h2,
+                              K = K,
+                              coh.size = coh.size,
+                              m = m,
+                              v = v,
+                              N = N,
+                              W = W,
+                              TOX = TOX,
+                              ntox = ntox,
+                              std.nTTP = std.nTTP)
+```
+
+\$safe.d indicates whether each dose (column) was declared safe in stage 1 (1 = yes, 0 = no) for each trial (row).  
+
+```{r}
+head(simulations$safe.d)
+head(simulations$sim.Y)
+head(simulations$sim.d)
+```
+\$sim.Y gives the observed outcomes, where each column corresponds to 1 patient (maximum of N columns), and each row is a simulated trial. Correspondingly, \$sim.d gives the dose allocation for each patient (column) in each trial (row). 
+
+To see the proportion of times we've designated each dose as safe in stage 1, we can simply take the column totals of the \$safe.d matrix:
+```{r}
+colSums(simulations$safe.d) / sims
+```
+
+Simulation results can be summarized. For each dose level, the inter-quartile range (25th percentile, median, 75th percentile) for the percent of subjects treated and observed efficacy are given in tables.
+
+```{r}
+sim.tables = sim.summary(simulations)
+```

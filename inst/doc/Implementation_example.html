@@ -98,22 +98,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Here we demonstrate how to use this package to implement and run an actual trial. Only two functions are needed: one for each stage.</p>
 <div id="stage-1-establish-the-safety-profile-for-all-initial-doses." class="section level2">
 <h2>Stage 1: Establish the safety profile for all initial doses.</h2>
-<p>The first stage requires only the calculation of the likelihood of safety <em>for each dose</em>, based on observed binary toxicity (yes/no DLT). The function takes as input the cohort size (equal number of patients assigned at each dose, default is 3), number of DLTs observed, the acceptable and unacceptable toxicity rates, and the likelihood threshold value (default is 2). This function is used after enrolling each dose.</p>
+<p>The first stage requires only the calculation of the likelihood of safety <em>for each dose</em>, based on observed toxicity. This function is used after enrolling each dose.</p>
+<div id="using-dlt-as-toxicity-measure" class="section level3">
+<h3>Using DLT as toxicity measure</h3>
+<p>When the measure of toxicity is binary (yes/no observed DLT), the function takes as input: the cohort size (equal number of patients assigned at each dose, default is 3), number of DLTs observed, the acceptable and unacceptable toxicity rates, and the likelihood threshold value (default is 2).</p>
 <p>For example, suppose we have the following data for a dose. Do we escalate to the next dose level, or declare this dose unsafe and move on to stage 2?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(iAdapt)</code></pre></div>
-<pre><code>## Loading required package: shiny</code></pre>
-<pre><code>## Loading required package: shinydashboard</code></pre>
-<pre><code>## 
-## Attaching package: 'shinydashboard'</code></pre>
-<pre><code>## The following object is masked from 'package:graphics':
-## 
-##     box</code></pre>
-<pre><code>## 
-## Attaching package: 'iAdapt'</code></pre>
-<pre><code>## The following object is masked from 'package:shiny':
-## 
-##     runExample</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Acceptable (p_yes) and unacceptable (p_no) DLT rates used for establishing safety</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(iAdapt)
+
+<span class="co"># Acceptable (p_yes) and unacceptable (p_no) DLT rates used for establishing safety</span>
 p_no &lt;-<span class="st"> </span><span class="fl">0.40</span>                                     
 p_yes &lt;-<span class="st"> </span><span class="fl">0.15</span>    
 
@@ -130,15 +122,44 @@ x &lt;-<span class="st"> </span><span class="dv">1</span></code></pre></div>
 <pre><code>## $LR
 ## [1] 0.75</code></pre>
 <p>Based on this data, because LR=0.75 &gt; 1/2 (1/K) we would escalate to the next dose. However, if we observed 2 DLTs instead of 1, we would not because LR &lt; 1/2</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">LRtox</span>(coh.size, <span class="dt">x =</span> <span class="dv">2</span>, p_no, p_yes, K)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">LRtox</span>(coh.size, <span class="dt">ndlt =</span> <span class="dv">2</span>, p_no, p_yes, K)</code></pre></div>
 <pre><code>## [1] &quot;Unsafe/Stop&quot;</code></pre>
 <pre><code>## $LR
 ## [1] 0.2</code></pre>
-<p>The program can be implemented for each dose to test its safety.</p>
+</div>
+<div id="using-quasi-continuous-toxicity-measure-nttp" class="section level3">
+<h3>Using quasi-continuous toxicity measure (nTTP)</h3>
+<p>When the measure of toxicity is quasi-continuous (normalized total toxicity profile; nTTP. See Ezzalfani et al. for more details), the function takes as input: the observed adverse event grades for each patient across each toxicity type, the number of different toxicity types, the cohort size (equal number of patients assigned at each dose, default is 3), the acceptable and unacceptable toxicity rates, the likelihood threshold value (default is 2), and the standard deviation of the nTTP values (default is 0.15).</p>
+<p>The output is interpreted the same as for DLT rate.</p>
+<p>Guidance on how to specify the acceptable and unacceptable toxicity rates is found in the vignette “nTTP_simulation_example”.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ntox =<span class="st"> </span><span class="dv">3</span> <span class="co"># three different types of toxicity </span>
+coh.size =<span class="st"> </span><span class="dv">3</span> <span class="co"># number of patients enrolled per dose</span>
+
+<span class="co"># Observed AE grades for each patient on tested dose</span>
+obs =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">tox1 =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),
+                 <span class="dt">tox2 =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>),
+                 <span class="dt">tox3 =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))
+
+<span class="co"># Toxicity burden weight matrix</span>
+W =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1.0</span>, <span class="fl">1.5</span>, <span class="co"># Burden weight for grades 0-4 for toxicity 1</span>
+             <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1.0</span>, <span class="fl">1.5</span>, <span class="co"># Burden weight for grades 0-4 for toxicity 2</span>
+             <span class="dv">0</span>, <span class="fl">0.00</span>, <span class="fl">0.00</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="co"># Burden weight for grades 0-4 for toxicity 3</span>
+           <span class="dt">nrow =</span> ntox, <span class="dt">byrow =</span> <span class="ot">TRUE</span>) 
+
+<span class="co"># Acceptable (p2) and unacceptable nTTP values</span>
+p1 &lt;-<span class="st"> </span><span class="fl">0.35</span>                                     
+p2 &lt;-<span class="st"> </span><span class="fl">0.10</span>       
+
+<span class="kw">LRtox.nTTP</span>(obs, ntox, coh.size, W, p1, p2, <span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">std.nTTP =</span> <span class="fl">0.15</span>) </code></pre></div>
+<pre><code>## [1] &quot;Safe/Escalate&quot;</code></pre>
+<pre><code>## $LR
+## [1] 3.44</code></pre>
+</div>
 </div>
 <div id="stage-2-adaptive-randomization-based-on-efficacy-outcomes." class="section level2">
 <h2>Stage 2: Adaptive randomization based on efficacy outcomes.</h2>
 <p>Once we have determined which doses are safe, we can move on to stage 2 and begin collecting information about effectiveness. If only only one dose was determined as safe in stage 1, then stage 2 will be omitted. The function at stage 2 returns the updated randomization probabilities and the dose allocation for the next enrolled patient, based on the observed efficacies up to that point in the trial.</p>
+<p>This function operates the same regardless of toxicity measure.</p>
 <p>As input, this function requires a vector of observed efficacies (for each patient) and a vector of the corresponding dose levels.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y.eff &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">9</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">34</span>, <span class="dv">10</span>, <span class="dv">27</span>, <span class="dv">38</span>, <span class="dv">42</span>, <span class="dv">60</span>, <span class="dv">75</span>, <span class="dv">48</span>, <span class="dv">62</span>)
 d.safe &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">4</span>)

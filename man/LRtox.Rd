@@ -4,12 +4,12 @@
 \alias{LRtox}
 \title{Calculates likelihood of safety for single dose}
 \usage{
-LRtox(coh.size, x, p1, p2, K = 2)
+LRtox(coh.size, ndlt, p1, p2, K = 2)
 }
 \arguments{
 \item{coh.size}{cohort size (number of patients) per dose (Stage 1)}
 
-\item{x}{number of observed DLTs}
+\item{ndlt}{number of observed DLTs}
 
 \item{p1}{toxicity under null (unsafe DLT rate). Values range from 0 - 1.}
 
@@ -26,7 +26,7 @@ Function \code{LRtox()} calculates the likelihood of safety for a single dose
 and designates whether to escalate to the next dose (safe) or stop dose escalation and move onto stage 2 (unsafe).
 }
 \examples{
-LRtox(coh.size=3,x=2,p1=0.40,p2=0.15,K=2)
-LRtox(coh.size=3,x=1,p1=0.40,p2=0.15,K=2)
+LRtox(coh.size = 3, ndlt = 2, p1 = 0.40, p2 = 0.15, K = 2)
+LRtox(coh.size = 3, ndlt = 1, p1 = 0.40, p2 = 0.15, K = 2)
 
 }

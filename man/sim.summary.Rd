@@ -2,28 +2,34 @@
 % Please edit documentation in R/sim.summary.R
 \name{sim.summary}
 \alias{sim.summary}
-\title{Visualize simulation results}
+\title{Visualize simulation results (Stages 1&2)}
 \usage{
-sim.summary(sims)
+sim.summary(sims, print = TRUE)
 }
 \arguments{
 \item{sims}{output from sim.trials}
+
+\item{print}{logical specifying whether to print tables in console}
 }
 \value{
 Printed tables and a list of the following objects:
 \itemize{
-\item pct.treated - IQR (25th percentile, median, 75th percentile) of percent of subjects treated at each dose level
+\item pct.treated - IQR (25th percentile, median, 75th percentile) of 
+percent of subjects treated at each dose level
 \item efficacy - IQR of efficacy observed at each dose level
 }
 }
 \description{
-Results from simulated trials (using \code{sim.trials()} function) displayed in tabular and/or graphical format
+Results from simulated trials (using \code{sim.trials()} function) 
+displayed in tabular and/or graphical format
 }
 \examples{
 # Number of pre-specified dose levels
 dose <- 5
+
 # Vector of true toxicities associated with each dose
-dose.tox <- c(0.05, 0.10, 0.20, 0.35, 0.45)       
+dose.tox <- c(0.05, 0.10, 0.20, 0.35, 0.45)      
+ 
 # Acceptable (p_yes) and unacceptable (p_no) DLT rates used for establishing safety
 p_no <- 0.40                                     
 p_yes <- 0.15    

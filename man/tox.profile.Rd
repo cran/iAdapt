@@ -2,7 +2,7 @@
 % Please edit documentation in R/tox.profile.R
 \name{tox.profile}
 \alias{tox.profile}
-\title{Generates DLTs and calculate the likelihood-ratio (LR) for each dose}
+\title{Generates DLTs and calculates the likelihood-ratio (LR) for each dose}
 \usage{
 tox.profile(dose, dose.tox, p1, p2, K, coh.size)
 }
@@ -24,7 +24,8 @@ tox.profile(dose, dose.tox, p1, p2, K, coh.size)
 cohort number, and likelihood ratio.
 }
 \description{
-Gives toxicity profile (number of dose-limiting toxicities) and likelihood ratio of safety for each dose.
+Gives toxicity profile (number of dose-limiting toxicities) 
+and likelihood ratio per dose based on binary toxicity.
 }
 \examples{
 # Number of pre-specified dose levels
@@ -40,15 +41,6 @@ K <- 2
 
 # Cohort size used in stage 1
 coh.size <- 3 
-
-# Vector of true mean efficacies per dose (here mean percent persistence per dose)
-m <- c(5, 15, 40, 65, 80)   # MUST BE THE SAME LENGTH AS dose.tox                  
-
-# Efficacy(equal) variance per dose
-v <- rep(0.01, 5) 
-
-# Total sample size (stages 1&2)                            
-N <- 25                                        
 
 # Stopping rule: if dose 1 is the only safe dose, allocate up to 9 pts.
 stop.rule <- 9 

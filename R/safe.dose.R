@@ -1,10 +1,11 @@
-#' @title Identify safe/acceptable doses  
+#' @title Identify safe/acceptable doses from stage 1 based on observed binary toxicity
 #' 
 #' @description Function \code{safe.dose()} distinguishes acceptable from unacceptable doses
 #' 
 #' @return List of the following objects:
 #' \itemize{
-#' \item alloc.safe - matrix of assignments only for acceptable doses (to be used in stage 2) and their corresponding toxicities
+#' \item alloc.safe - matrix of assignments only for acceptable doses 
+#' (to be used in stage 2) and their corresponding toxicities
 #' \item alloc.total - vector of all dose assignments from stage 1 
 #' \item n1 - total number of subjects allocated in stage 1
 #' }
@@ -32,9 +33,9 @@
 safe.dose <- function(dose, dose.tox, p1, p2, K, coh.size) {
   
   res         <- tox.profile(dose, dose.tox, p1, p2, K, coh.size)  # save output from tox.profile()
-  alloc.total <- sort(rep(res[, 1], coh.size))                      # sort according to dose/cohort size           
-  n1          <- nrow(res)*coh.size                                # total number of patients assigned to doses              
-  unsafe.dose <- which(res[, 4] <= (1/K))                          # identify which doses are unacceptably toxic
+  alloc.total <- sort(rep(res[, 1], coh.size))  # sort according to dose/cohort size
+  n1          <- nrow(res)*coh.size  # total number of patients assigned to doses 
+  unsafe.dose <- which(res[, 4] <= (1/K))  # identify which doses are unacceptably toxic
   
   if (length(unsafe.dose) == 0) {  # if-else to return only those rows for safe doses
     alloc.safe <- res[, 1:2]
