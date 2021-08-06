@@ -4,8 +4,7 @@
 \alias{LRtox.nTTP}
 \title{Calculates likelihood of safety for single dose, using nTTP}
 \usage{
-LRtox.nTTP(tox_grades, ntox, coh.size, W, p1, p2, K = 2,
-  std.nTTP = 0.15)
+LRtox.nTTP(tox_grades, ntox, coh.size, W, p1, p2, K = 2, std.nTTP = 0.15)
 }
 \arguments{
 \item{tox_grades}{data frame of observed AE grades for each patient (rows) across all toxicity types (columns).

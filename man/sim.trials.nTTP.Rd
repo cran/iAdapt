@@ -4,9 +4,25 @@
 \alias{sim.trials.nTTP}
 \title{Simulate full trial (both stages) x times when using nTTP to measure toxicity}
 \usage{
-sim.trials.nTTP(numsims, dose, p1, p2, K, coh.size, m, v, N,
-  stop.rule = 9, cohort = 1, samedose = TRUE, nbb = 100, W, TOX,
-  ntox, std.nTTP = 0.15)
+sim.trials.nTTP(
+  numsims,
+  dose,
+  p1,
+  p2,
+  K,
+  coh.size,
+  m,
+  v,
+  N,
+  stop.rule = 9,
+  cohort = 1,
+  samedose = TRUE,
+  nbb = 100,
+  W,
+  TOX,
+  ntox,
+  std.nTTP = 0.15
+)
 }
 \arguments{
 \item{numsims}{number of simulated trials}

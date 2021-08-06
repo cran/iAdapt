@@ -253,5 +253,5 @@ colSums(simulations$safe.d) / sims
 Simulation results can be summarized. For each dose level, the inter-quartile range (25th percentile, median, 75th percentile) for the percent of subjects treated and observed efficacy are given in tables.
 
 ```{r}
-sim.tables = sim.summary(simulations)
+sim.summary(simulations)
 ```

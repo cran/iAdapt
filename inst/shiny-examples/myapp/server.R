@@ -11,18 +11,18 @@ library(shiny)
 library(tidyverse)
 library(plotly)
 library(DT)
-#library(iAdapt)
+library(iAdapt)
 library(here)
 
 
-# load data? and source functions 
-source(here::here("R/beta.ab.R"))
-source(here::here("R/eff.stg1.R"))
-source(here::here("R/next.dose.R"))
-source(here::here("R/rand.stg2.R"))
-source(here::here("R/safe.dose.R"))
-source(here::here("R/sim.trials.R"))
-source(here::here("R/tox.profile.R"))
+# # load data? and source functions 
+# source(here::here("R/beta.ab.R"))
+# source(here::here("R/eff.stg1.R"))
+# source(here::here("R/next.dose.R"))
+# source(here::here("R/rand.stg2.R"))
+# source(here::here("R/safe.dose.R"))
+# source(here::here("R/sim.trials.R"))
+# source(here::here("R/tox.profile.R"))
 
 
 

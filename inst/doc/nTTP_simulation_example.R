@@ -1,8 +1,8 @@
-## ----setup, include=FALSE------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
                       eval = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(iAdapt)
 std.nTTP = 0.15 # standard deviation of nTTP value
 
@@ -34,7 +34,7 @@ data("TOX"); TOX # laod sample TOX array
 ## Grade at which an AE is defined as DLT for each toxicity type
 grade.thresh = c(3, 3, 4)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Obtain the expected mean toxicity score at each dose level
 tru_mnTTP = get.thresh(dose = d, ntox = ntox, W = W, TOX = TOX)
 
@@ -45,7 +45,7 @@ pDLT = dlt.prob(dose = d, TOX = TOX, ntox = ntox, grade.thresh = grade.thresh)
 h1 = 0.35
 h2 = 0.10
 
-## ---- echo=FALSE, fig.width=6, fig.height=5------------------------------
+## ---- echo=FALSE, fig.width=6, fig.height=5-----------------------------------
 # plot mnTTP
 plot(x = 1:d,
      y = tru_mnTTP,
@@ -82,23 +82,23 @@ text(x = 4,
      cex = 0.7,
      col = "red")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(3)
 tox.profile.nTTP(dose = d, p1 = h1, p2 = h2, K = K, coh.size = coh.size, ntox = ntox, W = W, TOX = TOX, std.nTTP = std.nTTP)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(3)
 safe.dose.nTTP(dose = d, p1 = h1, p2 = h2, K = K, coh.size = coh.size, W = W, TOX = TOX, ntox = ntox, std.nTTP = std.nTTP) 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(3)
 eff.stg1.nTTP(dose = d, p1 = h1, p2 = h2, K = K, m = m, v = v, coh.size = coh.size, nbb = 100, W = W, TOX = TOX, ntox = ntox, std.nTTP = std.nTTP) 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(3)
 rand.stg2.nTTP(dose = d, p1 = h1, p2 = h2, K = K, coh.size = coh.size, m = m, v = v, N = N, stop.rule = stop.rule, cohort = 1, samedose = TRUE, nbb = 100, W = W, TOX = TOX, ntox = ntox, std.nTTP = std.nTTP) 
 
-## ---- results='hide'-----------------------------------------------------
+## ---- results='hide'----------------------------------------------------------
 set.seed(3)
 sims = 1e2 # number of trials to simulate
 
@@ -116,14 +116,14 @@ simulations = sim.trials.nTTP(numsims = sims,
                               ntox = ntox,
                               std.nTTP = std.nTTP)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 head(simulations$safe.d)
 head(simulations$sim.Y)
 head(simulations$sim.d)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 colSums(simulations$safe.d) / sims
 
-## ------------------------------------------------------------------------
-sim.tables = sim.summary(simulations)
+## -----------------------------------------------------------------------------
+sim.summary(simulations)
 

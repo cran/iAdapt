@@ -20,7 +20,7 @@
 #' n rows, representing number of doses, and 5 columns (for grades 0-4). 
 #' Probabilities across each dose (rows) must sum to 1. See Ezzalfani et al. (2013) for details.
 #' 
-#' 
+#' @export
 
 
 nTTP.indiv.sim <- function(W, TOX, ntox, dose){

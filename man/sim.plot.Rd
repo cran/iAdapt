@@ -53,6 +53,6 @@ simulations = sim.trials(numsims = numsims, dose, dose.tox, p1 = p_no, p2 = p_ye
                          K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, 
                          samedose = TRUE, nbb = 100)
                          
-sim.plot(simulations)
+# sim.plot(simulations)
 
 }

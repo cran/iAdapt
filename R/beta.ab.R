@@ -5,8 +5,8 @@
 #' 
 #' @return Vector of alpha and beta values for generating beta random variable for a dose.
 #' 
-#' @param m  Vector of mean efficacies per dose. Values range from 0 - 100. (e.g, T cell persistence - values b/w 5 and 80 per cent) 
-#' @param v  Vector of efficacy variances per dose. Values range from 0 - 1. (e.g., 0.01)
+#' @param m  mean efficacies for given dose. Values range from 0 - 100. (e.g, T cell persistence - values b/w 5 and 80 per cent) 
+#' @param v  efficacy variance per dose. Values range from 0 - 1. (e.g., 0.01)
 #' 
 #' @export
 #' 

@@ -4,8 +4,21 @@
 \alias{rand.stg2}
 \title{Stage 2 Adaptive Randomization}
 \usage{
-rand.stg2(dose, dose.tox, p1, p2, K, coh.size, m, v, N, stop.rule = 9,
-  cohort = 1, samedose = TRUE, nbb = 100)
+rand.stg2(
+  dose,
+  dose.tox,
+  p1,
+  p2,
+  K,
+  coh.size,
+  m,
+  v,
+  N,
+  stop.rule = 9,
+  cohort = 1,
+  samedose = TRUE,
+  nbb = 100
+)
 }
 \arguments{
 \item{dose}{number of doses to be tested (scalar)}

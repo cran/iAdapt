@@ -45,7 +45,7 @@
 #'                          K, coh.size, m, v, N, stop.rule = stop.rule, cohort = 1, 
 #'                          samedose = TRUE, nbb = 100)
 #'                          
-#' sim.plot(simulations)
+#' # sim.plot(simulations)
 #' 
 #' @export
 #' 
@@ -63,11 +63,11 @@ sim.plot <- function(sims) {
                  ylim = c(0, 100),
                  ylab = "Percent allocation",
                  xlab = "Dose",
-                 cex = 2,
+                 cex = 1.3,
                  pch = 19,
-                 main = "Percent allocation across doses")
+                 main = "Percent allocation")
   for (i in 1:dd) {
-    graphics::lines(x = rep(i, 2), y = t[i, c(2, 4)], lwd = 4)
+    graphics::lines(x = rep(i, 2), y = t[i, c(2, 4)], lwd = 3)
   }
   
   ## Estimated response
@@ -77,10 +77,14 @@ sim.plot <- function(sims) {
                  ylim = c(0, 100),
                  ylab = "Estimated response",
                  xlab = "Dose",
-                 cex = 2,
+                 cex = 1.3,
                  pch = 19,
-                 main = "Estimated response (T-cell persistence)")
+                 main = "Estimated response")
   for (i in 1:dd) {
-    graphics::lines(x = rep(i, 2), y = t[i, c(2, 4)], lwd = 4)
+    graphics::lines(x = rep(i, 2), y = t[i, c(2, 4)], lwd = 3)
   }
+  
+  # reset graphics parameters
+  grDevices::graphics.off()
+  
 }

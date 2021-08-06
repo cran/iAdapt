@@ -4,8 +4,20 @@
 \alias{eff.stg1.nTTP}
 \title{Generates efficacy outcomes for stage 1 when using nTTP to measure toxicity}
 \usage{
-eff.stg1.nTTP(dose, p1, p2, K, coh.size, m, v, nbb = 100, W, TOX, ntox,
-  std.nTTP)
+eff.stg1.nTTP(
+  dose,
+  p1,
+  p2,
+  K,
+  coh.size,
+  m,
+  v,
+  nbb = 100,
+  W,
+  TOX,
+  ntox,
+  std.nTTP
+)
 }
 \arguments{
 \item{dose}{number of doses to be tested (scalar)}

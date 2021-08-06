@@ -4,8 +4,22 @@
 \alias{sim.trials}
 \title{Simulate full trial (both stages) x times}
 \usage{
-sim.trials(numsims, dose, dose.tox, p1, p2, K, coh.size, m, v, N,
-  stop.rule = 9, cohort = 1, samedose = TRUE, nbb = 100)
+sim.trials(
+  numsims,
+  dose,
+  dose.tox,
+  p1,
+  p2,
+  K,
+  coh.size,
+  m,
+  v,
+  N,
+  stop.rule = 9,
+  cohort = 1,
+  samedose = TRUE,
+  nbb = 100
+)
 }
 \arguments{
 \item{numsims}{number of simulated trials}

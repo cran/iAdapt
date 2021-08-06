@@ -4,8 +4,7 @@
 \alias{tox.profile.nTTP}
 \title{Generate nTTPs toxicity scores and the likelihhood-ratio (LR) per dose}
 \usage{
-tox.profile.nTTP(dose, p1, p2, K, coh.size, ntox, W, TOX,
-  std.nTTP = 0.15)
+tox.profile.nTTP(dose, p1, p2, K, coh.size, ntox, W, TOX, std.nTTP = 0.15)
 }
 \arguments{
 \item{dose}{number of doses to be tested (scalar)}

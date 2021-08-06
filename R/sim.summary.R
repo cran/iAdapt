@@ -86,14 +86,14 @@ sim.summary <- function(sims, print = TRUE){
   }
   Y = est.pers1[-1, ]
   
-  if (print == TRUE) {
-    print(knitr::kable(dose.IQR, caption = "Percent allocation per dose level", 
-                       col.names = c("Dose", "25th percentile", "Median", 
-                                     "75th percentile", "Mean")))
-    print(knitr::kable(Y, caption = "Estimated efficacy per dose level", 
-                       col.names = c("Dose", "25th percentile", "Median", 
-                                     "75th percentile", "Mean")))
-  }
+  # if (print == TRUE) {
+  #   print(knitr::kable(dose.IQR, caption = "Percent allocation per dose level", 
+  #                      col.names = c("Dose", "25th percentile", "Median", 
+  #                                    "75th percentile", "Mean")))
+  #   print(knitr::kable(Y, caption = "Estimated efficacy per dose level", 
+  #                      col.names = c("Dose", "25th percentile", "Median", 
+  #                                    "75th percentile", "Mean")))
+  # }
   
   return(list(pct.treated = dose.IQR, efficacy = Y))
 }

@@ -70,6 +70,13 @@ sim.trials <- function(numsims, dose, dose.tox, p1, p2, K, coh.size, m, v, N, st
   sim.yk <- sim.dk <- matrix(NA, nrow = numsims, ncol = N)
   sim.doses <- matrix(NA, nrow = numsims, ncol = dose)
   
+  ## add progress bar to output
+  pb <- utils::txtProgressBar(min = 0,      # Minimum value of the progress bar
+                              max = numsims, # Maximum value of the progress bar
+                              style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                              width = 50,   # Progress bar width. Defaults to getOption("width")
+                              char = "=")   # Character used to create the bar
+  
   for (i in 1:numsims) {  
     
     fstudy.out <- rand.stg2(dose, dose.tox, p1, p2, K, coh.size, m, v, N, stop.rule, cohort, samedose, nbb)              
@@ -89,7 +96,11 @@ sim.trials <- function(numsims, dose, dose.tox, p1, p2, K, coh.size, m, v, N, st
       sim.yk[i,] <- fstudy.out$Y.final
       sim.dk[i,] <- fstudy.out$d.final
     }
-    cat(i,"\n")
+    
+    # Sets the progress bar to the current state
+    utils::setTxtProgressBar(pb, i)
+    
+    # cat(i,"\n")
   }
   return(list(sim.Y = sim.yk, 
               sim.d = sim.dk, 

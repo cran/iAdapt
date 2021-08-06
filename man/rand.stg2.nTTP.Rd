@@ -4,9 +4,24 @@
 \alias{rand.stg2.nTTP}
 \title{Stage 2 Adaptive Randomization with nTTP to monitor toxicity}
 \usage{
-rand.stg2.nTTP(dose, p1, p2, K, coh.size, m, v, N, stop.rule = 9,
-  cohort = 1, samedose = TRUE, nbb = 100, W, TOX, ntox,
-  std.nTTP = 0.15)
+rand.stg2.nTTP(
+  dose,
+  p1,
+  p2,
+  K,
+  coh.size,
+  m,
+  v,
+  N,
+  stop.rule = 9,
+  cohort = 1,
+  samedose = TRUE,
+  nbb = 100,
+  W,
+  TOX,
+  ntox,
+  std.nTTP = 0.15
+)
 }
 \arguments{
 \item{dose}{number of doses to be tested (scalar)}
